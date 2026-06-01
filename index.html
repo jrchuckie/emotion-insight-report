@@ -1,1231 +1,405 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>食品饮料情绪洞察 · Top10 情绪 × 代表笔记</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>食品饮料行业情绪洞察报告</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:#f5f5f7;color:#1d1d1f;min-height:100vh}
-.hd{background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);color:#fff;padding:36px 20px 28px;text-align:center}
-.hd h1{font-size:22px;font-weight:800;letter-spacing:.5px;margin-bottom:6px}
-.hd p{font-size:12px;opacity:.65}
-.tabs{display:flex;gap:6px;padding:14px 16px;background:#fff;border-bottom:1px solid #e5e5e7;position:sticky;top:0;z-index:100;overflow-x:auto}
-.tab-btn{padding:7px 16px;border:1.5px solid var(--tc);background:transparent;color:var(--tc);border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap;transition:.2s}
-.tab-btn.active{background:var(--tc);color:#fff}
-.main{max-width:1080px;margin:0 auto;padding:16px 14px 60px}
-.track-section{display:none}.track-section.active{display:block}
-.track-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:#fff;border-radius:12px;margin-bottom:12px;border-left:4px solid var(--tc);box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.track-title{font-size:17px;font-weight:700;margin-right:8px}
-.track-desc{font-size:12px;color:#888}
-.data-badge{font-size:11px;color:#aaa;white-space:nowrap}
-.emotion-row{display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.rank-num{width:28px;height:28px;border-radius:50%;background:#f0f0f0;color:#999;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.rank-gold{background:#FFD700;color:#7a5800}
-.rank-silver{background:#C0C0C0;color:#444}
-.rank-bronze{background:#CD7F32;color:#fff}
-.emo-main{min-width:0}
-.emo-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.emo-name{font-size:14px;font-weight:600;min-width:64px}
-.emo-pct{font-size:14px;font-weight:700}
-.emo-cnt{font-size:12px;color:#aaa}
-.bar-wrap{height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden}
-.bar{height:100%;border-radius:3px;transition:width .5s ease}
-.note-slot{flex-shrink:0}
-.note-card{display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;background:#f8f8f8;border:1px solid #eee;border-radius:10px;padding:8px 10px;max-width:240px;min-width:180px;transition:.2s}
-.note-card:hover{background:#fff;border-color:#ddd;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-.note-thumb{width:44px;height:58px;border-radius:6px;overflow:hidden;flex-shrink:0;background:#eee;display:flex;align-items:center;justify-content:center}
-.note-thumb img{width:100%;height:100%;object-fit:cover}
-.note-ph{font-size:20px}
-.note-info{flex:1;min-width:0}
-.note-brand{display:block;font-size:10px;color:#999;margin-bottom:3px}
-.note-title{display:block;font-size:11px;font-weight:500;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.note-link{display:block;font-size:10px;color:#aaa;margin-top:3px}
-.footer{text-align:center;padding:16px;font-size:11px;color:#bbb;border-top:1px solid #eee;background:#fff}
-@media(max-width:600px){
-  .emotion-row{grid-template-columns:28px 1fr;}
-  .note-slot{grid-column:1/-1;padding-left:40px;}
-  .note-card{max-width:100%;min-width:0;}
-}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #0f1117; color: #e8eaf0; }
+  
+  .header { background: linear-gradient(135deg, #1a1d2e 0%, #16213e 100%); padding: 48px 40px 32px; border-bottom: 1px solid #2a2d3e; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+  .header .subtitle { margin-top: 8px; font-size: 14px; color: #8892a4; }
+  .header .meta { margin-top: 16px; display: flex; gap: 24px; flex-wrap: wrap; }
+  .meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6b7280; }
+  .meta-dot { width: 6px; height: 6px; border-radius: 50%; background: #6366f1; }
+
+  .nav { background: #1a1d2e; border-bottom: 1px solid #2a2d3e; padding: 0 40px; display: flex; gap: 0; overflow-x: auto; }
+  .nav-btn { padding: 14px 20px; font-size: 13px; color: #8892a4; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.2s; }
+  .nav-btn:hover { color: #c4c9d4; }
+  .nav-btn.active { color: #818cf8; border-bottom-color: #818cf8; }
+
+  .content { padding: 32px 40px; max-width: 1400px; margin: 0 auto; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-title { font-size: 18px; font-weight: 600; color: #e2e8f0; margin-bottom: 8px; }
+  .section-desc { font-size: 13px; color: #6b7280; margin-bottom: 24px; }
+
+  /* 排行榜 */
+  .rank-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 32px; }
+  .rank-card { background: #1a1d2e; border: 1px solid #2a2d3e; border-radius: 12px; padding: 20px; }
+  .rank-card-title { font-size: 14px; font-weight: 600; color: #c4c9d4; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .track-badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .track-overall { background: #312e81; color: #a5b4fc; }
+  .track-food { background: #1e3a2e; color: #6ee7b7; }
+  .track-drink { background: #1e2a4a; color: #93c5fd; }
+  .track-alcohol { background: #3a1e2e; color: #f9a8d4; }
+  .track-dairy { background: #3a2e1e; color: #fcd34d; }
+
+  .emotion-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid #1e2130; }
+  .emotion-row:last-child { border-bottom: none; }
+  .rank-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .rank-1 { background: #92400e; color: #fbbf24; }
+  .rank-2 { background: #374151; color: #9ca3af; }
+  .rank-3 { background: #431407; color: #f97316; }
+  .rank-other { background: #1e2130; color: #6b7280; }
+  .emotion-name { flex: 1; font-size: 13px; color: #c4c9d4; }
+  .emotion-bar-wrap { width: 80px; height: 6px; background: #1e2130; border-radius: 3px; overflow: hidden; }
+  .emotion-bar { height: 100%; border-radius: 3px; }
+  .emotion-pct { font-size: 12px; color: #6b7280; width: 38px; text-align: right; flex-shrink: 0; }
+
+  /* 折线图 */
+  .chart-container { background: #1a1d2e; border: 1px solid #2a2d3e; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+  .chart-wrap { position: relative; height: 420px; }
+
+  /* 洞察卡 */
+  .insight-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin-top: 24px; }
+  .insight-card { background: #1a1d2e; border: 1px solid #2a2d3e; border-radius: 12px; padding: 20px; }
+  .insight-tag { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px; display: inline-block; margin-bottom: 10px; }
+  .tag-age { background: #1e3347; color: #7dd3fc; }
+  .tag-city { background: #1e3a2e; color: #6ee7b7; }
+  .insight-card h4 { font-size: 14px; font-weight: 600; color: #e2e8f0; margin-bottom: 8px; }
+  .insight-card p { font-size: 12px; color: #8892a4; line-height: 1.7; }
+  .insight-highlight { color: #a5b4fc; font-weight: 600; }
+
+  /* 人群top10 */
+  .group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .group-card { background: #1a1d2e; border: 1px solid #2a2d3e; border-radius: 10px; padding: 16px; }
+  .group-title { font-size: 13px; font-weight: 600; color: #c4c9d4; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #2a2d3e; }
+  
+  .footer-note { margin-top: 40px; padding: 16px 20px; background: #1a1d2e; border: 1px solid #2a2d3e; border-radius: 8px; font-size: 12px; color: #6b7280; line-height: 1.8; }
 </style>
 </head>
 <body>
-<header class="hd">
-  <h1>🍜 食品饮料情绪洞察</h1>
-  <p>Top 10 情绪分布 × 赛道对比 × 代表性笔记 | 点击卡片可跳转小红书原笔记</p>
-</header>
-<nav class="tabs">
-<button class="tab-btn active" data-t="tab-overall" style="--tc:#6B4FBB">食品饮料整体</button>
-<button class="tab-btn" data-t="tab-food" style="--tc:#E8734A">食品</button>
-<button class="tab-btn" data-t="tab-drink" style="--tc:#3A9BD5">饮料</button>
-<button class="tab-btn" data-t="tab-alcohol" style="--tc:#C0392B">酒水</button>
-<button class="tab-btn" data-t="tab-dairy" style="--tc:#27AE60">乳制品</button>
-</nav>
-<main class="main">
-<section class="track-section" id="tab-overall">
-  <div class="track-header" style="--tc:#6B4FBB">
-    <div>
-      <span class="track-title">食品饮料整体</span>
-      
-    </div>
-    <span class="data-badge">2025年至今 · dtm=20260531</span>
-  </div>
-  <div class="track-list"><div class="emotion-row">
-  <div class="rank-num rank-gold">1</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">快乐</span>
-      <span class="emo-pct" style="color:#6B4FBB">40.6%</span>
-      <span class="emo-cnt">251,184 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:100%;background:#6B4FBB88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/69901912000000000e00ea72" target="_blank" class="note-card" title="以前的我不屑一顾‼️现在的我逐帧学习">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/69901912000000000e00ea72!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">东阿阿胶</span>
-    <span class="note-title">以前的我不屑一顾‼️现在的我逐帧学习</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num rank-silver">2</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">爱意</span>
-      <span class="emo-pct" style="color:#6B4FBB">17.3%</span>
-      <span class="emo-cnt">106,942 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:42%;background:#6B4FBB88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/678ccd570000000018035759" target="_blank" class="note-card" title="今天摆摊卖红糖，大家都说过年用红糖包汤圆">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/678ccd570000000018035759!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">今天摆摊卖红糖，大家都说过年用红糖包汤圆</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num rank-bronze">3</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">惊讶</span>
-      <span class="emo-pct" style="color:#6B4FBB">16.2%</span>
-      <span class="emo-cnt">100,059 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:39%;background:#6B4FBB88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/68c363dd000000001c0119d4" target="_blank" class="note-card" title="小学生早餐100天不重样">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/68c363dd000000001c0119d4!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">小学生早餐100天不重样</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">4</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">希望感</span>
-      <span class="emo-pct" style="color:#6B4FBB">6.2%</span>
-      <span class="emo-cnt">38,055 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:15%;background:#6B4FBB88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/67e14df7000000001c009309" target="_blank" class="note-card" title="重生之我跟蓝莓面包，幸福的团聚">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/67e14df7000000001c009309!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">重生之我跟蓝莓面包，幸福的团聚</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">5</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">依赖感</span>
-      <span class="emo-pct" style="color:#6B4FBB">3.0%</span>
-      <span class="emo-cnt">18,337 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:7%;background:#6B4FBB88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/686cd40c000000001d00e482" target="_blank" class="note-card" title="💜零食袋爆改时尚单品💜">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/686cd40c000000001d00e482!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">乐事</span>
-    <span class="note-title">💜零食袋爆改时尚单品💜</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">6</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">释放感</span>
-      <span class="emo-pct" style="color:#6B4FBB">2.8%</span>
-      <span class="emo-cnt">17,479 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:6%;background:#6B4FBB88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/69a17063000000001b0147ec" target="_blank" class="note-card" title="和九岁＋小朋友开学早餐">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/69a17063000000001b0147ec!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">和九岁＋小朋友开学早餐</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">7</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">自我实现感</span>
-      <span class="emo-pct" style="color:#6B4FBB">2.2%</span>
-      <span class="emo-cnt">13,826 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:5%;background:#6B4FBB88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/67f369f2000000001d02629e" target="_blank" class="note-card" title="小姐姐说这是新品，可以拍一下。。。">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/67f369f2000000001d02629e!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">小姐姐说这是新品，可以拍一下。。。</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">8</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">谢意</span>
-      <span class="emo-pct" style="color:#6B4FBB">1.8%</span>
-      <span class="emo-cnt">10,894 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:4%;background:#6B4FBB88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/69a6d1710000000015032add" target="_blank" class="note-card" title="诡秘你们要的番茄锅包虾…">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/69a6d1710000000015032add!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">诡秘你们要的番茄锅包虾…</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">9</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">信任感</span>
-      <span class="emo-pct" style="color:#6B4FBB">1.7%</span>
-      <span class="emo-cnt">10,342 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:4%;background:#6B4FBB88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/68ab636b000000001d015aa4" target="_blank" class="note-card" title="什么牌子的火锅丸子好吃又安全">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/68ab636b000000001d015aa4!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">什么牌子的火锅丸子好吃又安全</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">10</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">启迪感</span>
-      <span class="emo-pct" style="color:#6B4FBB">1.1%</span>
-      <span class="emo-cnt">6,594 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:2%;background:#6B4FBB88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/6929b84e000000001e012bbc" target="_blank" class="note-card" title="谁研究的许愿苹果，还挺好吃">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/6929b84e000000001e012bbc!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">谁研究的许愿苹果，还挺好吃</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div></div>
-</section>
-<section class="track-section" id="tab-food">
-  <div class="track-header" style="--tc:#E8734A">
-    <div>
-      <span class="track-title">食品</span>
-      <span class="track-desc">休闲零食 · 方便速食 · 粮油调味 · 水果水产 · 烘焙甜品</span>
-    </div>
-    <span class="data-badge">2025年至今 · dtm=20260531</span>
-  </div>
-  <div class="track-list"><div class="emotion-row">
-  <div class="rank-num rank-gold">1</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">快乐</span>
-      <span class="emo-pct" style="color:#E8734A">46.3%</span>
-      <span class="emo-cnt">193,094 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:100%;background:#E8734A88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/69901912000000000e00ea72" target="_blank" class="note-card" title="以前的我不屑一顾‼️现在的我逐帧学习📝">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/69901912000000000e00ea72!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">东阿阿胶</span>
-    <span class="note-title">以前的我不屑一顾‼️现在的我逐帧学习📝</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num rank-silver">2</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">惊讶</span>
-      <span class="emo-pct" style="color:#E8734A">17.6%</span>
-      <span class="emo-cnt">73,607 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:38%;background:#E8734A88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/68c363dd000000001c0119d4" target="_blank" class="note-card" title="小学生早餐100天不重样">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/68c363dd000000001c0119d4!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">小学生早餐100天不重样</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num rank-bronze">3</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">爱意</span>
-      <span class="emo-pct" style="color:#E8734A">17.1%</span>
-      <span class="emo-cnt">71,457 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:36%;background:#E8734A88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/678ccd570000000018035759" target="_blank" class="note-card" title="今天摆摊卖红糖，大家都说过年用红糖包汤圆">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/678ccd570000000018035759!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">今天摆摊卖红糖，大家都说过年用红糖包汤圆</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">4</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">希望感</span>
-      <span class="emo-pct" style="color:#E8734A">6.4%</span>
-      <span class="emo-cnt">26,619 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:13%;background:#E8734A88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/67e14df7000000001c009309" target="_blank" class="note-card" title="重生之我跟蓝莓面包，幸福的团聚">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/67e14df7000000001c009309!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">重生之我跟蓝莓面包，幸福的团聚</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">5</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">依赖感</span>
-      <span class="emo-pct" style="color:#E8734A">3.5%</span>
-      <span class="emo-cnt">14,787 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:7%;background:#E8734A88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/686cd40c000000001d00e482" target="_blank" class="note-card" title="💜零食袋爆改时尚单品💜">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/686cd40c000000001d00e482!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">乐事</span>
-    <span class="note-title">💜零食袋爆改时尚单品💜</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">6</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">释放感</span>
-      <span class="emo-pct" style="color:#E8734A">2.6%</span>
-      <span class="emo-cnt">10,920 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:5%;background:#E8734A88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/69a17063000000001b0147ec" target="_blank" class="note-card" title="和九岁＋小朋友开学早餐">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/69a17063000000001b0147ec!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">和九岁＋小朋友开学早餐</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">7</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">自我实现感</span>
-      <span class="emo-pct" style="color:#E8734A">2.1%</span>
-      <span class="emo-cnt">8,775 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:4%;background:#E8734A88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/67f369f2000000001d02629e" target="_blank" class="note-card" title="小姐姐说这是新品，可以拍一下">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/67f369f2000000001d02629e!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">小姐姐说这是新品，可以拍一下</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">8</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">谢意</span>
-      <span class="emo-pct" style="color:#E8734A">1.8%</span>
-      <span class="emo-cnt">7,415 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:3%;background:#E8734A88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/69a6d1710000000015032add" target="_blank" class="note-card" title="诡秘你们要的番茄锅包虾…">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/69a6d1710000000015032add!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">诡秘你们要的番茄锅包虾…</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">9</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">信任感</span>
-      <span class="emo-pct" style="color:#E8734A">1.3%</span>
-      <span class="emo-cnt">5,512 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:2%;background:#E8734A88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/68ab636b000000001d015aa4" target="_blank" class="note-card" title="什么牌子的火锅丸子好吃又安全">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/68ab636b000000001d015aa4!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">什么牌子的火锅丸子好吃又安全</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">10</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">启迪感</span>
-      <span class="emo-pct" style="color:#E8734A">1.0%</span>
-      <span class="emo-cnt">4,200 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:2%;background:#E8734A88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/6929b84e000000001e012bbc" target="_blank" class="note-card" title="谁研究的许愿苹果，还挺好吃">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/6929b84e000000001e012bbc!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">谁研究的许愿苹果，还挺好吃</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div></div>
-</section>
-<section class="track-section" id="tab-drink">
-  <div class="track-header" style="--tc:#3A9BD5">
-    <div>
-      <span class="track-title">饮料</span>
-      <span class="track-desc">饮料冲调</span>
-    </div>
-    <span class="data-badge">2025年至今 · dtm=20260531</span>
-  </div>
-  <div class="track-list"><div class="emotion-row">
-  <div class="rank-num rank-gold">1</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">快乐</span>
-      <span class="emo-pct" style="color:#3A9BD5">44.9%</span>
-      <span class="emo-cnt">43,877 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:100%;background:#3A9BD588"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/68709fdc000000002203c56c" target="_blank" class="note-card" title="沉浸式露营"精致女生"在悬崖便利店住一晚">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/68709fdc000000002203c56c!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">依云</span>
-    <span class="note-title">沉浸式露营"精致女生"在悬崖便利店住一晚</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num rank-silver">2</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">爱意</span>
-      <span class="emo-pct" style="color:#3A9BD5">17.5%</span>
-      <span class="emo-cnt">17,131 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:38%;background:#3A9BD588"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/688234aa000000001d00ca9d" target="_blank" class="note-card" title="懒妈悟了‼️带娃家庭👍野路子收纳，yyds…">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/688234aa000000001d00ca9d!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">金豆芽</span>
-    <span class="note-title">懒妈悟了‼️带娃家庭👍野路子收纳，yyds…</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num rank-bronze">3</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">惊讶</span>
-      <span class="emo-pct" style="color:#3A9BD5">15.8%</span>
-      <span class="emo-cnt">15,397 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:35%;background:#3A9BD588"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/68c363dd000000001c0119d4" target="_blank" class="note-card" title="小学生早餐100天不重样">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/68c363dd000000001c0119d4!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">小学生早餐100天不重样</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">4</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">希望感</span>
-      <span class="emo-pct" style="color:#3A9BD5">6.9%</span>
-      <span class="emo-cnt">6,691 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:15%;background:#3A9BD588"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/67aac641000000002803d22e" target="_blank" class="note-card" title="12款小朋友营养早餐做法😊开学早餐我包了‼️">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/67aac641000000002803d22e!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">12款小朋友营养早餐做法😊开学早餐我包了‼️</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">5</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">释放感</span>
-      <span class="emo-pct" style="color:#3A9BD5">4.7%</span>
-      <span class="emo-cnt">4,560 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:10%;background:#3A9BD588"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/69a17063000000001b0147ec" target="_blank" class="note-card" title="和九岁＋小朋友开学早餐">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/69a17063000000001b0147ec!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">和九岁＋小朋友开学早餐</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">6</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">自我实现感</span>
-      <span class="emo-pct" style="color:#3A9BD5">3.7%</span>
-      <span class="emo-cnt">3,607 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:8%;background:#3A9BD588"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/687f57a4000000001202d998" target="_blank" class="note-card" title="常喝养肝水，肝净人自美🍵">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/687f57a4000000001202d998!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">常喝养肝水，肝净人自美🍵</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">7</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">依赖感</span>
-      <span class="emo-pct" style="color:#3A9BD5">2.4%</span>
-      <span class="emo-cnt">2,327 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:5%;background:#3A9BD588"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/6a007a5c0000000036031f71" target="_blank" class="note-card" title="一条没有朋友的小狗，出了什么问题">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/6a007a5c0000000036031f71!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">阳光</span>
-    <span class="note-title">一条没有朋友的小狗，出了什么问题</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">8</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">信任感</span>
-      <span class="emo-pct" style="color:#3A9BD5">2.3%</span>
-      <span class="emo-cnt">2,204 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:5%;background:#3A9BD588"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/680daaeb000000001d0208c3" target="_blank" class="note-card" title="宝宝苹果水怎么煮怎么喝？手把手教你！">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/680daaeb000000001d0208c3!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">宝宝苹果水怎么煮怎么喝？手把手教你！</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">9</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">启迪感</span>
-      <span class="emo-pct" style="color:#3A9BD5">1.8%</span>
-      <span class="emo-cnt">1,726 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:4%;background:#3A9BD588"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/6805d6fb000000001c01edc5" target="_blank" class="note-card" title="我的天‼️不按说明书用🧐好用到离谱‼️开眼界">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/6805d6fb000000001c01edc5!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">百岁山Ganten</span>
-    <span class="note-title">我的天‼️不按说明书用🧐好用到离谱‼️开眼界</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">10</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">谢意</span>
-      <span class="emo-pct" style="color:#3A9BD5">1.2%</span>
-      <span class="emo-cnt">1,200 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:2%;background:#3A9BD588"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/697c20e2000000000903921b" target="_blank" class="note-card" title="那些英语不好的尴尬瞬间！！留学生来请客～">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/697c20e2000000000903921b!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">可口可乐</span>
-    <span class="note-title">那些英语不好的尴尬瞬间！！留学生来请客～</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div></div>
-</section>
-<section class="track-section" id="tab-alcohol">
-  <div class="track-header" style="--tc:#C0392B">
-    <div>
-      <span class="track-title">酒水</span>
-      <span class="track-desc">啤酒 · 白酒 · 果酒 · 洋酒</span>
-    </div>
-    <span class="data-badge">2025年至今 · dtm=20260531</span>
-  </div>
-  <div class="track-list"><div class="emotion-row">
-  <div class="rank-num rank-gold">1</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">快乐</span>
-      <span class="emo-pct" style="color:#C0392B">43.0%</span>
-      <span class="emo-cnt">14,554 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:100%;background:#C0392B88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/695ce662000000000c034416" target="_blank" class="note-card" title="我最爱吃烤肉了">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/695ce662000000000c034416!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">雪花</span>
-    <span class="note-title">我最爱吃烤肉了</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num rank-silver">2</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">爱意</span>
-      <span class="emo-pct" style="color:#C0392B">20.6%</span>
-      <span class="emo-cnt">6,962 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:47%;background:#C0392B88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/68679c4800000000120336c3" target="_blank" class="note-card" title="中式词牌名特调合集🌷评论区留下你最爱的词">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/68679c4800000000120336c3!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">中式词牌名特调合集🌷评论区留下你最爱的词</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num rank-bronze">3</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">惊讶</span>
-      <span class="emo-pct" style="color:#C0392B">15.9%</span>
-      <span class="emo-cnt">5,389 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:36%;background:#C0392B88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/68230ec3000000000303992e" target="_blank" class="note-card" title="🐱｜又来做小罐泡酒啦 一口一个方便又好喝！">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/68230ec3000000000303992e!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">🐱｜又来做小罐泡酒啦 一口一个方便又好喝！</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">4</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">希望感</span>
-      <span class="emo-pct" style="color:#C0392B">8.5%</span>
-      <span class="emo-cnt">2,883 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:19%;background:#C0392B88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/68568c0200000000110009c1" target="_blank" class="note-card" title="喝酒化妆挑战">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/68568c0200000000110009c1!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">喝酒化妆挑战</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">5</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">依赖感</span>
-      <span class="emo-pct" style="color:#C0392B">4.3%</span>
-      <span class="emo-cnt">1,439 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:10%;background:#C0392B88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/67f6c6f5000000001d016f87" target="_blank" class="note-card" title="今天喝个有意思的  醉春见～">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/67f6c6f5000000001d016f87!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">今天喝个有意思的  醉春见～</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">6</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">释放感</span>
-      <span class="emo-pct" style="color:#C0392B">4.0%</span>
-      <span class="emo-cnt">1,365 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:9%;background:#C0392B88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/67e3c126000000001201fc55" target="_blank" class="note-card" title="微醺芒果椰子冰｜嘴动一动 也能降温">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/67e3c126000000001201fc55!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">微醺芒果椰子冰｜嘴动一动 也能降温</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">7</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">自我实现感</span>
-      <span class="emo-pct" style="color:#C0392B">2.8%</span>
-      <span class="emo-cnt">961 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:6%;background:#C0392B88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/67b6f466000000002602c3d3" target="_blank" class="note-card" title="有在好好吃饭哟😋">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/67b6f466000000002602c3d3!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">有在好好吃饭哟😋</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">8</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">谢意</span>
-      <span class="emo-pct" style="color:#C0392B">1.8%</span>
-      <span class="emo-cnt">614 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:4%;background:#C0392B88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/68a48bbe000000001d019e76" target="_blank" class="note-card" title="怎么没有遗憾呢 怎么不苦呢">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/68a48bbe000000001d019e76!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">怎么没有遗憾呢 怎么不苦呢</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">9</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">启迪感</span>
-      <span class="emo-pct" style="color:#C0392B">1.8%</span>
-      <span class="emo-cnt">606 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:4%;background:#C0392B88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/679b67af000000002803e13a" target="_blank" class="note-card" title="发财酒">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/679b67af000000002803e13a!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">发财酒</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">10</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">信任感</span>
-      <span class="emo-pct" style="color:#C0392B">1.5%</span>
-      <span class="emo-cnt">500 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:3%;background:#C0392B88"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/679452bb000000002900c356" target="_blank" class="note-card" title="温情租约 一对忘年交的温暖日常…">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/679452bb000000002900c356!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">RIO清爽</span>
-    <span class="note-title">温情租约 一对忘年交的温暖日常…</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div></div>
-</section>
-<section class="track-section" id="tab-dairy">
-  <div class="track-header" style="--tc:#27AE60">
-    <div>
-      <span class="track-title">乳制品</span>
-      <span class="track-desc">奶粉 · 液态奶 · 酸奶 · 奶酪</span>
-    </div>
-    <span class="data-badge">2025年至今 · dtm=20260531</span>
-  </div>
-  <div class="track-list"><div class="emotion-row">
-  <div class="rank-num rank-gold">1</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">快乐</span>
-      <span class="emo-pct" style="color:#27AE60">38.0%</span>
-      <span class="emo-cnt">25,433 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:100%;background:#27AE6088"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/6778ecf60000000009014c00" target="_blank" class="note-card" title="干噎酸奶，我愿称它为驾校的神！！！">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/6778ecf60000000009014c00!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">干噎酸奶，我愿称它为驾校的神！！！</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num rank-silver">2</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">爱意</span>
-      <span class="emo-pct" style="color:#27AE60">29.2%</span>
-      <span class="emo-cnt">19,565 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:76%;background:#27AE6088"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/6926ec68000000001e031768" target="_blank" class="note-card" title="vlog教程｜10万人看过的20秒学14个拍摄机位">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/6926ec68000000001e031768!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">悦鲜活</span>
-    <span class="note-title">vlog教程｜10万人看过的20秒学14个拍摄机位</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num rank-bronze">3</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">惊讶</span>
-      <span class="emo-pct" style="color:#27AE60">16.9%</span>
-      <span class="emo-cnt">11,323 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:44%;background:#27AE6088"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/68eda929000000000300d163" target="_blank" class="note-card" title="奶酪棒，解锁甜品的隐藏神器！">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/68eda929000000000300d163!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">奶酪棒，解锁甜品的隐藏神器！</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">4</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">希望感</span>
-      <span class="emo-pct" style="color:#27AE60">5.9%</span>
-      <span class="emo-cnt">3,972 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:15%;background:#27AE6088"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/6991e3be000000000903b461" target="_blank" class="note-card" title="我的奶被全赶出去了">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/6991e3be000000000903b461!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">轻滋畅</span>
-    <span class="note-title">我的奶被全赶出去了</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">5</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">信任感</span>
-      <span class="emo-pct" style="color:#27AE60">4.0%</span>
-      <span class="emo-cnt">2,673 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:10%;background:#27AE6088"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/68510c09000000002202a290" target="_blank" class="note-card" title="装修干货｜吊顶验收这些坑千万别踩！！">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/68510c09000000002202a290!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">安慕希</span>
-    <span class="note-title">装修干货｜吊顶验收这些坑千万别踩！！</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">6</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">谢意</span>
-      <span class="emo-pct" style="color:#27AE60">3.1%</span>
-      <span class="emo-cnt">2,059 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:8%;background:#27AE6088"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/67939e910000000029010943" target="_blank" class="note-card" title="认识8年的好朋友 今天给我做了六菜一汤">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/67939e910000000029010943!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">认识8年的好朋友 今天给我做了六菜一汤</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">7</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">释放感</span>
-      <span class="emo-pct" style="color:#27AE60">3.1%</span>
-      <span class="emo-cnt">2,055 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:8%;background:#27AE6088"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/68b941c8000000001d0218bf" target="_blank" class="note-card" title="吃点饭全靠套路🔥邪修整治饭渣宝宝‼️">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/68b941c8000000001d0218bf!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">卡士</span>
-    <span class="note-title">吃点饭全靠套路🔥邪修整治饭渣宝宝‼️</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">8</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">自我实现感</span>
-      <span class="emo-pct" style="color:#27AE60">2.4%</span>
-      <span class="emo-cnt">1,576 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:6%;background:#27AE6088"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/67791366000000000b02003e" target="_blank" class="note-card" title="雪花酥教程来啦！新手一学就会！">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/67791366000000000b02003e!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">安佳</span>
-    <span class="note-title">雪花酥教程来啦！新手一学就会！</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">9</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">依赖感</span>
-      <span class="emo-pct" style="color:#27AE60">1.5%</span>
-      <span class="emo-cnt">971 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:3%;background:#27AE6088"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/6794b2a00000000018019c7d" target="_blank" class="note-card" title="推荐你听过但不知道歌名的音乐🎵">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/6794b2a00000000018019c7d!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    
-    <span class="note-title">推荐你听过但不知道歌名的音乐🎵</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div><div class="emotion-row">
-  <div class="rank-num ">10</div>
-  <div class="emo-main">
-    <div class="emo-top">
-      <span class="emo-name">启迪感</span>
-      <span class="emo-pct" style="color:#27AE60">1.0%</span>
-      <span class="emo-cnt">700 篇</span>
-    </div>
-    <div class="bar-wrap">
-      <div class="bar" style="width:2%;background:#27AE6088"></div>
-    </div>
-  </div>
-  <div class="note-slot"><a href="https://www.xiaohongshu.com/explore/68a1724f000000001d01d56e" target="_blank" class="note-card" title="万万没想到❗️不按套路来竟然意外的好用">
-  <div class="note-thumb">
-    <img src="https://sns-img-bd.xhscdn.com/68a1724f000000001d01d56e!nd_ft_webp" onerror="this.parentElement.innerHTML='<div class=\'note-ph\'>📖</div>'" alt="" loading="lazy"/>
-  </div>
-  <div class="note-info">
-    <span class="note-brand">特仑苏</span>
-    <span class="note-title">万万没想到❗️不按套路来竟然意外的好用</span>
-    <span class="note-link">点击查看 →</span>
-  </div>
-</a></div>
-</div></div>
-</section>
-</main>
-<footer class="footer">
-  数据来源：小红书情绪数据集（red_lab.app_emotion_skill_df），dtm=20260531，统计 2025 年至今积极 & 中性情绪笔记。
-</footer>
+
+<div class="header">
+  <h1>🧠 食品饮料行业情绪洞察报告</h1>
+  <div class="subtitle">基于小红书商业笔记情绪数据集 · 95种细粒度情绪分析</div>
+  <div class="meta">
+    <div class="meta-item"><div class="meta-dot"></div>数据来源：red_lab.app_emotion_skill_df · dtm=20260531</div>
+    <div class="meta-item"><div class="meta-dot"></div>笔记范围：商业一级类目「食品饮料」2025-01 至今</div>
+    <div class="meta-item"><div class="meta-dot"></div>有效样本：约238万条笔记（积极情绪过滤后）</div>
+    <div class="meta-item"><div class="meta-dot"></div>情绪粒度：primary_emotion · 95种细粒度</div>
+  </div>
+</div>
+
+<div class="nav">
+  <div class="nav-btn active" onclick="switchTab(0)">① 整体食饮 Top10</div>
+  <div class="nav-btn" onclick="switchTab(1)">② 子赛道 Top10</div>
+  <div class="nav-btn" onclick="switchTab(2)">③ 月度趋势</div>
+  <div class="nav-btn" onclick="switchTab(3)">④ 年龄段差异</div>
+  <div class="nav-btn" onclick="switchTab(4)">⑤ 城市线级差异</div>
+</div>
+
+<div class="content">
+
+<!-- Section 1: 整体Top10 -->
+<div class="section active" id="s0">
+  <div class="section-title">食品饮料整体 · Top 10 积极情绪</div>
+  <div class="section-desc">仅统计 primary_emotion_valence = '积极' 的笔记，按去重笔记数排序</div>
+  <div class="rank-grid">
+    <div class="rank-card" style="grid-column: 1 / -1; max-width: 580px;">
+      <div class="rank-card-title"><span class="track-badge track-overall">整体食饮</span>Top 10 积极情绪排名</div>
+      <div id="overall-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 2: 子赛道 -->
+<div class="section" id="s1">
+  <div class="section-title">子赛道 Top 10 积极情绪</div>
+  <div class="section-desc">食品 = 除饮料冲调/酒类/乳制品外的所有二级类目合并</div>
+  <div class="rank-grid" id="track-grid"></div>
+</div>
+
+<!-- Section 3: 月度趋势 -->
+<div class="section" id="s2">
+  <div class="section-title">Top 10 积极情绪月度趋势</div>
+  <div class="section-desc">2025-01 至 2026-05，各情绪逐月去重笔记数变化（折线图，可点图例显隐）</div>
+  <div class="chart-container">
+    <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+  </div>
+  <div class="insight-grid">
+    <div class="insight-card">
+      <span class="insight-tag tag-age">趋势洞察①</span>
+      <h4>畅爽长期霸榜，但绝对量呈季节性波动</h4>
+      <p>畅爽在2025全年占积极情绪第一，峰值在<span class="insight-highlight">4月（15,972条）</span>，Q4逐步回落。2026年数据因打标滞后偏低，非真实下降。</p>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-age">趋势洞察②</span>
+      <h4>欣慰从下半年开始超越欣赏感，跃升第三</h4>
+      <p>上半年（1-5月）欣赏感稳居第三；7月起<span class="insight-highlight">欣慰持续反超</span>欣赏感——消费者情感从"喜欢产品"转向"我做了一个好选择"的认可型情绪。</p>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-age">趋势洞察③</span>
+      <h4>期待感在Q1最强，随季节递减</h4>
+      <p>期待感在<span class="insight-highlight">1月最高（5,565条）</span>，符合年初新品发布、节日礼赠场景集中的规律，Q3以后逐步下降。</p>
+    </div>
+  </div>
+</div>
+
+<!-- Section 4: 年龄段 -->
+<div class="section" id="s3">
+  <div class="section-title">年龄段 × 积极情绪 Top 10 差异</div>
+  <div class="section-desc">各年龄段前10名积极情绪排名（数字为去重笔记数）</div>
+  <div class="group-grid" id="age-grid"></div>
+  <div class="insight-grid" style="margin-top: 24px;">
+    <div class="insight-card">
+      <span class="insight-tag tag-age">年龄洞察①</span>
+      <h4>18岁以下：颜值娱乐驱动，爱慕感独特出圈</h4>
+      <p>0-18岁 Top10中<span class="insight-highlight">逗趣感（#5）与爱慕感（#10）</span>显著高于其他年龄段。网红零食、趣味包装、IP联名是触达这一人群的核心钩子。</p>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-age">年龄洞察②</span>
+      <h4>19-25岁：品质尝鲜，欣赏感排名最高</h4>
+      <p>19-25岁中<span class="insight-highlight">欣赏感（#3）与好感（#7）</span>明显领先其他年龄段——这是颜值种草、口感探索最活跃的群体，内容策略应强化产品质感展示。</p>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-age">年龄洞察③</span>
+      <h4>26-35岁：欣慰跃升核心情绪</h4>
+      <p>26岁起<span class="insight-highlight">欣慰跃升为第3位</span>（19-25岁仅第8位）。"终于找到一款适合自己的""给家人买了很放心"——这是成年消费者对"值得"的情感确认，品牌应强化信任背书与生活方式认同。</p>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-age">年龄洞察④</span>
+      <h4>41岁以上：知足感与启迪感持续走强</h4>
+      <p>41-50岁及51+中<span class="insight-highlight">知足感（#8）和启迪感（#11）</span>排名明显高于年轻群体。养生健康、食材知识、饮食文化内容更能触动中老年食饮消费者。</p>
+    </div>
+  </div>
+</div>
+
+<!-- Section 5: 城市线级 -->
+<div class="section" id="s4">
+  <div class="section-title">城市线级 × 积极情绪 Top 10 差异</div>
+  <div class="section-desc">一线/新一线/二线/三线/四线/五线城市各前10积极情绪对比</div>
+  <div class="group-grid" id="city-grid"></div>
+  <div class="insight-grid" style="margin-top: 24px;">
+    <div class="insight-card">
+      <span class="insight-tag tag-city">城市洞察①</span>
+      <h4>一线/新一线：欣赏感领先，理性品质导向</h4>
+      <p>一线城市<span class="insight-highlight">欣赏感排名第3</span>，高于欣慰（第6）。消费者更在意产品本身的质感与品味，内容策略应强调成分、工艺、颜值等感知层维度。</p>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-city">城市洞察②</span>
+      <h4>二线及以下：欣慰逐渐超越欣赏感</h4>
+      <p>从二线起，<span class="insight-highlight">欣慰（#3）稳定领先欣赏感（#4）</span>，且越往下沉差距越大（四线、五线欣慰稳居第3）。情感认可胜过美学欣赏，内容应突出"选对了""家人喜欢""划算"等情感共鸣点。</p>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-city">城市洞察③</span>
+      <h4>下沉市场：逗趣感比例更高</h4>
+      <p>三线及以下城市中<span class="insight-highlight">逗趣感排名第6</span>，超过一线城市的第7位——幽默、接地气、生活化的内容形式在下沉市场更受欢迎。</p>
+    </div>
+    <div class="insight-card">
+      <span class="insight-tag tag-city">城市洞察④</span>
+      <h4>策略含义：高线感性+理性，低线情感温度</h4>
+      <p>高线城市投放可突出<span class="insight-highlight">颜值、成分、品质感</span>（触发欣赏感）；低线城市投放更应传递<span class="insight-highlight">家庭温情、实惠感、亲切感</span>（触发欣慰+逗趣感）。</p>
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">
+  📋 数据说明 | 来源：red_lab.app_emotion_skill_df · dtm=20260531 · 情绪粒度：primary_emotion（95种）· 效价过滤：primary_emotion_valence = '积极' · 统计方式：COUNT(DISTINCT note_id) · 笔记发布时间：2025-01-01 至今 · 商业一级类目：食品饮料
+</div>
+
+</div><!-- end content -->
+
 <script>
-const tabs=document.querySelectorAll('.tab-btn');
-const secs=document.querySelectorAll('.track-section');
-secs[0].classList.add('active');
-tabs.forEach(b=>b.addEventListener('click',()=>{
-  tabs.forEach(x=>x.classList.remove('active'));
-  secs.forEach(x=>x.classList.remove('active'));
-  b.classList.add('active');
-  const t=document.getElementById(b.dataset.t);
-  if(t)t.classList.add('active');
+// ==================== 数据 ====================
+const overallData = [
+  {e:'畅爽',cnt:176341},{e:'惊喜',cnt:90906},{e:'欣慰',cnt:45732},
+  {e:'欣赏感',cnt:42271},{e:'期待感',cnt:35288},{e:'愉悦',cnt:30607},
+  {e:'逗趣感',cnt:29673},{e:'好感',cnt:14771},{e:'知足感',cnt:12201},
+  {e:'庆幸感',cnt:10184}
+];
+
+const trackRaw = {
+  '食品': [
+    {e:'畅爽',cnt:151771},{e:'惊喜',cnt:78123},{e:'欣慰',cnt:41903},
+    {e:'欣赏感',cnt:33320},{e:'期待感',cnt:29558},{e:'愉悦',cnt:27086},
+    {e:'逗趣感',cnt:26002},{e:'好感',cnt:13003},{e:'知足感',cnt:9555},
+    {e:'庆幸感',cnt:8201}
+  ],
+  '饮料': [
+    {e:'畅爽',cnt:30778},{e:'惊喜',cnt:13898},{e:'欣赏感',cnt:7796},
+    {e:'欣慰',cnt:6704},{e:'愉悦',cnt:5210},{e:'期待感',cnt:5964},
+    {e:'逗趣感',cnt:3958},{e:'知足感',cnt:3549},{e:'成就感',cnt:2248},
+    {e:'庆幸感',cnt:2192}
+  ],
+  '酒水': [
+    {e:'畅爽',cnt:10559},{e:'惊喜',cnt:5021},{e:'欣赏感',cnt:4331},
+    {e:'期待感',cnt:2663},{e:'愉悦',cnt:1615},{e:'逗趣感',cnt:1520},
+    {e:'庆幸感',cnt:769},{e:'好感',cnt:892},{e:'知足感',cnt:695},
+    {e:'欣慰',cnt:1318}
+  ],
+  '乳制品': [
+    {e:'畅爽',cnt:16627},{e:'欣慰',cnt:15491},{e:'惊喜',cnt:10627},
+    {e:'期待感',cnt:3657},{e:'愉悦',cnt:4367},{e:'欣赏感',cnt:2755},
+    {e:'知足感',cnt:1425},{e:'感激',cnt:1825},{e:'好感',cnt:1023},
+    {e:'逗趣感',cnt:2803}
+  ]
+};
+
+const monthlyRaw = [
+  {ym:'2025-01',e:'畅爽',cnt:16357},{ym:'2025-01',e:'惊喜',cnt:9798},{ym:'2025-01',e:'期待感',cnt:5565},{ym:'2025-01',e:'欣慰',cnt:4974},{ym:'2025-01',e:'欣赏感',cnt:4341},{ym:'2025-01',e:'愉悦',cnt:4176},{ym:'2025-01',e:'逗趣感',cnt:2972},{ym:'2025-01',e:'庆幸感',cnt:1437},{ym:'2025-01',e:'好感',cnt:1435},{ym:'2025-01',e:'知足感',cnt:1215},
+  {ym:'2025-02',e:'畅爽',cnt:13654},{ym:'2025-02',e:'惊喜',cnt:6911},{ym:'2025-02',e:'欣赏感',cnt:3478},{ym:'2025-02',e:'欣慰',cnt:3168},{ym:'2025-02',e:'愉悦',cnt:2642},{ym:'2025-02',e:'期待感',cnt:2522},{ym:'2025-02',e:'逗趣感',cnt:2370},{ym:'2025-02',e:'好感',cnt:1103},{ym:'2025-02',e:'庆幸感',cnt:1088},{ym:'2025-02',e:'知足感',cnt:1018},
+  {ym:'2025-03',e:'畅爽',cnt:15424},{ym:'2025-03',e:'惊喜',cnt:7652},{ym:'2025-03',e:'欣赏感',cnt:3712},{ym:'2025-03',e:'欣慰',cnt:3355},{ym:'2025-03',e:'愉悦',cnt:2700},{ym:'2025-03',e:'期待感',cnt:2573},{ym:'2025-03',e:'逗趣感',cnt:2492},{ym:'2025-03',e:'好感',cnt:1237},{ym:'2025-03',e:'知足感',cnt:1012},{ym:'2025-03',e:'庆幸感',cnt:848},
+  {ym:'2025-04',e:'畅爽',cnt:15972},{ym:'2025-04',e:'惊喜',cnt:7953},{ym:'2025-04',e:'欣赏感',cnt:3817},{ym:'2025-04',e:'欣慰',cnt:3446},{ym:'2025-04',e:'期待感',cnt:2749},{ym:'2025-04',e:'愉悦',cnt:2568},{ym:'2025-04',e:'逗趣感',cnt:2533},{ym:'2025-04',e:'好感',cnt:1220},{ym:'2025-04',e:'知足感',cnt:966},{ym:'2025-04',e:'庆幸感',cnt:776},
+  {ym:'2025-05',e:'畅爽',cnt:15044},{ym:'2025-05',e:'惊喜',cnt:8365},{ym:'2025-05',e:'欣慰',cnt:3684},{ym:'2025-05',e:'欣赏感',cnt:3539},{ym:'2025-05',e:'期待感',cnt:2707},{ym:'2025-05',e:'逗趣感',cnt:2577},{ym:'2025-05',e:'愉悦',cnt:2411},{ym:'2025-05',e:'好感',cnt:1242},{ym:'2025-05',e:'知足感',cnt:943},{ym:'2025-05',e:'庆幸感',cnt:832},
+  {ym:'2025-06',e:'畅爽',cnt:13643},{ym:'2025-06',e:'惊喜',cnt:6752},{ym:'2025-06',e:'欣慰',cnt:3811},{ym:'2025-06',e:'欣赏感',cnt:3003},{ym:'2025-06',e:'逗趣感',cnt:2393},{ym:'2025-06',e:'期待感',cnt:2367},{ym:'2025-06',e:'愉悦',cnt:2091},{ym:'2025-06',e:'好感',cnt:1132},{ym:'2025-06',e:'知足感',cnt:888},{ym:'2025-06',e:'庆幸感',cnt:716},
+  {ym:'2025-07',e:'畅爽',cnt:12403},{ym:'2025-07',e:'惊喜',cnt:5990},{ym:'2025-07',e:'欣慰',cnt:4070},{ym:'2025-07',e:'欣赏感',cnt:2902},{ym:'2025-07',e:'逗趣感',cnt:2337},{ym:'2025-07',e:'期待感',cnt:2298},{ym:'2025-07',e:'愉悦',cnt:1935},{ym:'2025-07',e:'好感',cnt:1010},{ym:'2025-07',e:'知足感',cnt:893},{ym:'2025-07',e:'庆幸感',cnt:683},
+  {ym:'2025-08',e:'畅爽',cnt:12084},{ym:'2025-08',e:'惊喜',cnt:6278},{ym:'2025-08',e:'欣慰',cnt:3841},{ym:'2025-08',e:'欣赏感',cnt:3159},{ym:'2025-08',e:'逗趣感',cnt:2626},{ym:'2025-08',e:'期待感',cnt:2443},{ym:'2025-08',e:'愉悦',cnt:1878},{ym:'2025-08',e:'好感',cnt:1075},{ym:'2025-08',e:'知足感',cnt:841},{ym:'2025-08',e:'庆幸感',cnt:624},
+  {ym:'2025-09',e:'畅爽',cnt:12519},{ym:'2025-09',e:'惊喜',cnt:6490},{ym:'2025-09',e:'欣慰',cnt:4400},{ym:'2025-09',e:'欣赏感',cnt:3127},{ym:'2025-09',e:'期待感',cnt:2637},{ym:'2025-09',e:'逗趣感',cnt:2205},{ym:'2025-09',e:'愉悦',cnt:2110},{ym:'2025-09',e:'好感',cnt:1218},{ym:'2025-09',e:'知足感',cnt:923},{ym:'2025-09',e:'庆幸感',cnt:681},
+  {ym:'2025-10',e:'畅爽',cnt:10940},{ym:'2025-10',e:'惊喜',cnt:5487},{ym:'2025-10',e:'欣慰',cnt:4458},{ym:'2025-10',e:'欣赏感',cnt:2621},{ym:'2025-10',e:'期待感',cnt:2285},{ym:'2025-10',e:'愉悦',cnt:1896},{ym:'2025-10',e:'逗趣感',cnt:1740},{ym:'2025-10',e:'好感',cnt:1052},{ym:'2025-10',e:'知足感',cnt:887},{ym:'2025-10',e:'庆幸感',cnt:600},
+  {ym:'2025-11',e:'畅爽',cnt:10567},{ym:'2025-11',e:'惊喜',cnt:5303},{ym:'2025-11',e:'欣赏感',cnt:2364},{ym:'2025-11',e:'期待感',cnt:1864},{ym:'2025-11',e:'欣慰',cnt:1666},{ym:'2025-11',e:'愉悦',cnt:1644},{ym:'2025-11',e:'逗趣感',cnt:1459},{ym:'2025-11',e:'好感',cnt:854},{ym:'2025-11',e:'知足感',cnt:750},{ym:'2025-11',e:'庆幸感',cnt:493},
+  {ym:'2025-12',e:'畅爽',cnt:9128},{ym:'2025-12',e:'惊喜',cnt:4588},{ym:'2025-12',e:'欣赏感',cnt:2033},{ym:'2025-12',e:'期待感',cnt:1642},{ym:'2025-12',e:'愉悦',cnt:1597},{ym:'2025-12',e:'欣慰',cnt:1494},{ym:'2025-12',e:'逗趣感',cnt:1245},{ym:'2025-12',e:'好感',cnt:739},{ym:'2025-12',e:'知足感',cnt:583},{ym:'2025-12',e:'庆幸感',cnt:444},
+  {ym:'2026-01',e:'畅爽',cnt:7728},{ym:'2026-01',e:'惊喜',cnt:4146},{ym:'2026-01',e:'欣赏感',cnt:1733},{ym:'2026-01',e:'期待感',cnt:1564},{ym:'2026-01',e:'欣慰',cnt:1497},{ym:'2026-01',e:'愉悦',cnt:1234},{ym:'2026-01',e:'逗趣感',cnt:1132},{ym:'2026-01',e:'好感',cnt:596},{ym:'2026-01',e:'知足感',cnt:506},{ym:'2026-01',e:'庆幸感',cnt:400},
+  {ym:'2026-02',e:'畅爽',cnt:4300},{ym:'2026-02',e:'惊喜',cnt:2290},{ym:'2026-02',e:'欣赏感',cnt:1056},{ym:'2026-02',e:'期待感',cnt:962},{ym:'2026-02',e:'欣慰',cnt:954},{ym:'2026-02',e:'愉悦',cnt:770},{ym:'2026-02',e:'逗趣感',cnt:679},{ym:'2026-02',e:'好感',cnt:375},{ym:'2026-02',e:'知足感',cnt:306},{ym:'2026-02',e:'庆幸感',cnt:258},
+  {ym:'2026-03',e:'畅爽',cnt:4064},{ym:'2026-03',e:'惊喜',cnt:1792},{ym:'2026-03',e:'欣赏感',cnt:902},{ym:'2026-03',e:'期待感',cnt:739},{ym:'2026-03',e:'愉悦',cnt:629},{ym:'2026-03',e:'欣慰',cnt:608},{ym:'2026-03',e:'逗趣感',cnt:585},{ym:'2026-03',e:'好感',cnt:322},{ym:'2026-03',e:'知足感',cnt:312},{ym:'2026-03',e:'庆幸感',cnt:189},
+  {ym:'2026-04',e:'畅爽',cnt:2056},{ym:'2026-04',e:'惊喜',cnt:889},{ym:'2026-04',e:'欣赏感',cnt:401},{ym:'2026-04',e:'期待感',cnt:312},{ym:'2026-04',e:'愉悦',cnt:264},{ym:'2026-04',e:'逗趣感',cnt:264},{ym:'2026-04',e:'欣慰',cnt:240},{ym:'2026-04',e:'知足感',cnt:130},{ym:'2026-04',e:'好感',cnt:128},{ym:'2026-04',e:'庆幸感',cnt:91},
+  {ym:'2026-05',e:'畅爽',cnt:458},{ym:'2026-05',e:'惊喜',cnt:222},{ym:'2026-05',e:'欣赏感',cnt:83},{ym:'2026-05',e:'欣慰',cnt:66},{ym:'2026-05',e:'逗趣感',cnt:64},{ym:'2026-05',e:'愉悦',cnt:62},{ym:'2026-05',e:'期待感',cnt:59},{ym:'2026-05',e:'好感',cnt:33},{ym:'2026-05',e:'知足感',cnt:28},{ym:'2026-05',e:'庆幸感',cnt:24}
+];
+
+const ageRaw = {
+  '0-18': [{e:'畅爽',cnt:2376},{e:'惊喜',cnt:1376},{e:'欣赏感',cnt:766},{e:'期待感',cnt:741},{e:'逗趣感',cnt:727},{e:'愉悦',cnt:549},{e:'欣慰',cnt:518},{e:'好感',cnt:362},{e:'庆幸感',cnt:162},{e:'爱慕感',cnt:141}],
+  '19-22': [{e:'畅爽',cnt:21247},{e:'惊喜',cnt:9631},{e:'欣赏感',cnt:4669},{e:'期待感',cnt:3925},{e:'愉悦',cnt:3643},{e:'逗趣感',cnt:3173},{e:'好感',cnt:2132},{e:'欣慰',cnt:1818},{e:'庆幸感',cnt:866},{e:'知足感',cnt:856}],
+  '23-25': [{e:'畅爽',cnt:28442},{e:'惊喜',cnt:14161},{e:'欣赏感',cnt:6249},{e:'期待感',cnt:4884},{e:'愉悦',cnt:4768},{e:'逗趣感',cnt:4125},{e:'欣慰',cnt:3110},{e:'好感',cnt:2541},{e:'庆幸感',cnt:1355},{e:'知足感',cnt:1334}],
+  '26-30': [{e:'畅爽',cnt:49555},{e:'惊喜',cnt:26385},{e:'欣慰',cnt:11993},{e:'欣赏感',cnt:11127},{e:'期待感',cnt:9305},{e:'愉悦',cnt:7988},{e:'逗趣感',cnt:7895},{e:'好感',cnt:3843},{e:'知足感',cnt:3121},{e:'庆幸感',cnt:2815}],
+  '31-35': [{e:'畅爽',cnt:32836},{e:'惊喜',cnt:17294},{e:'欣慰',cnt:12027},{e:'欣赏感',cnt:7939},{e:'期待感',cnt:6834},{e:'愉悦',cnt:5924},{e:'逗趣感',cnt:5853},{e:'知足感',cnt:2700},{e:'好感',cnt:2553},{e:'庆幸感',cnt:2106}],
+  '36-40': [{e:'畅爽',cnt:17877},{e:'惊喜',cnt:9122},{e:'欣慰',cnt:6441},{e:'欣赏感',cnt:4903},{e:'期待感',cnt:4051},{e:'逗趣感',cnt:3499},{e:'愉悦',cnt:3355},{e:'知足感',cnt:1783},{e:'好感',cnt:1355},{e:'庆幸感',cnt:1301}],
+  '41-50': [{e:'畅爽',cnt:10712},{e:'惊喜',cnt:5277},{e:'欣慰',cnt:3178},{e:'欣赏感',cnt:3104},{e:'期待感',cnt:2475},{e:'逗趣感',cnt:2039},{e:'愉悦',cnt:1982},{e:'知足感',cnt:1144},{e:'好感',cnt:868},{e:'庆幸感',cnt:708}],
+  '51+': [{e:'畅爽',cnt:10592},{e:'惊喜',cnt:5515},{e:'欣慰',cnt:3877},{e:'欣赏感',cnt:2708},{e:'期待感',cnt:1948},{e:'愉悦',cnt:1728},{e:'逗趣感',cnt:1685},{e:'知足感',cnt:851},{e:'好感',cnt:708},{e:'庆幸感',cnt:636}]
+};
+
+const cityRaw = {
+  '一线城市': [{e:'畅爽',cnt:36458},{e:'惊喜',cnt:20289},{e:'欣赏感',cnt:9494},{e:'期待感',cnt:7036},{e:'愉悦',cnt:6360},{e:'欣慰',cnt:6088},{e:'逗趣感',cnt:5593},{e:'好感',cnt:2730},{e:'知足感',cnt:2607},{e:'庆幸感',cnt:2336}],
+  '新一线城市': [{e:'畅爽',cnt:51261},{e:'惊喜',cnt:25360},{e:'欣赏感',cnt:11891},{e:'欣慰',cnt:11192},{e:'期待感',cnt:9586},{e:'愉悦',cnt:8655},{e:'逗趣感',cnt:8123},{e:'好感',cnt:3971},{e:'知足感',cnt:3482},{e:'庆幸感',cnt:2882}],
+  '二线城市': [{e:'畅爽',cnt:34948},{e:'惊喜',cnt:17176},{e:'欣慰',cnt:8892},{e:'欣赏感',cnt:7985},{e:'期待感',cnt:6802},{e:'愉悦',cnt:6059},{e:'逗趣感',cnt:5773},{e:'好感',cnt:2875},{e:'知足感',cnt:2322},{e:'庆幸感',cnt:1889}],
+  '三线城市': [{e:'畅爽',cnt:23374},{e:'惊喜',cnt:10933},{e:'欣慰',cnt:7861},{e:'欣赏感',cnt:4953},{e:'期待感',cnt:4747},{e:'逗趣感',cnt:4105},{e:'愉悦',cnt:3962},{e:'好感',cnt:2134},{e:'知足感',cnt:1517},{e:'庆幸感',cnt:1235}],
+  '四线城市': [{e:'畅爽',cnt:15239},{e:'惊喜',cnt:7916},{e:'欣慰',cnt:5927},{e:'欣赏感',cnt:3529},{e:'期待感',cnt:3372},{e:'逗趣感',cnt:3182},{e:'愉悦',cnt:2671},{e:'好感',cnt:1414},{e:'知足感',cnt:1048},{e:'感激',cnt:968}],
+  '五线城市': [{e:'畅爽',cnt:6917},{e:'惊喜',cnt:3154},{e:'欣慰',cnt:2412},{e:'欣赏感',cnt:1750},{e:'期待感',cnt:1479},{e:'逗趣感',cnt:1270},{e:'愉悦',cnt:1153},{e:'好感',cnt:640},{e:'知足感',cnt:536},{e:'感激',cnt:432}]
+};
+
+// ==================== 颜色 ====================
+const COLORS = ['#818cf8','#34d399','#fb923c','#f472b6','#38bdf8','#a3e635','#fbbf24','#e879f9','#2dd4bf','#f87171'];
+const TRACK_COLORS = { '食品':'#6ee7b7', '饮料':'#93c5fd', '酒水':'#f9a8d4', '乳制品':'#fcd34d' };
+const TRACK_BADGE = { '食品':'track-food', '饮料':'track-drink', '酒水':'track-alcohol', '乳制品':'track-dairy' };
+
+function pct(cnt, total) { return (cnt/total*100).toFixed(1); }
+function fmtK(n) { return n >= 10000 ? (n/10000).toFixed(1)+'万' : n.toLocaleString(); }
+
+// ==================== 渲染排行榜 ====================
+function renderRankList(container, data, color) {
+  const total = data.reduce((s,d)=>s+d.cnt,0);
+  const max = data[0].cnt;
+  container.innerHTML = data.map((d,i)=>{
+    const p = pct(d.cnt, total);
+    const barW = Math.round(d.cnt/max*100);
+    const rankClass = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-other';
+    return `<div class="emotion-row">
+      <div class="rank-num ${rankClass}">${i+1}</div>
+      <div class="emotion-name">${d.e}</div>
+      <div class="emotion-bar-wrap"><div class="emotion-bar" style="width:${barW}%;background:${color||COLORS[i]};"></div></div>
+      <div class="emotion-pct">${p}%</div>
+    </div>`;
+  }).join('');
+}
+
+// Section 1: 整体
+const overallList = document.getElementById('overall-list');
+renderRankList(overallList, overallData, '#818cf8');
+
+// Section 2: 子赛道
+const trackGrid = document.getElementById('track-grid');
+Object.entries(trackRaw).forEach(([track, data]) => {
+  const sorted = [...data].sort((a,b)=>b.cnt-a.cnt).slice(0,10);
+  const card = document.createElement('div');
+  card.className = 'rank-card';
+  card.innerHTML = `<div class="rank-card-title"><span class="track-badge ${TRACK_BADGE[track]}">${track}</span>Top 10 积极情绪</div><div id="track-${track}"></div>`;
+  trackGrid.appendChild(card);
+  renderRankList(card.querySelector(`#track-${track}`), sorted, TRACK_COLORS[track]);
+});
+
+// Section 3: 折线图
+const emotions = ['畅爽','惊喜','欣慰','欣赏感','期待感','愉悦','逗趣感','好感','知足感','庆幸感'];
+const months = [...new Set(monthlyRaw.map(d=>d.ym))].sort();
+const datasets = emotions.map((e,i) => ({
+  label: e,
+  data: months.map(m => { const row = monthlyRaw.find(d=>d.ym===m&&d.e===e); return row?row.cnt:0; }),
+  borderColor: COLORS[i],
+  backgroundColor: COLORS[i]+'22',
+  borderWidth: 2,
+  pointRadius: 3,
+  tension: 0.3
 }));
+
+new Chart(document.getElementById('trendChart'), {
+  type: 'line',
+  data: { labels: months, datasets },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { position: 'top', labels: { color:'#8892a4', font:{size:11}, boxWidth:12, padding:12 } },
+      tooltip: { backgroundColor:'#1e2130', titleColor:'#e2e8f0', bodyColor:'#8892a4', borderColor:'#2a2d3e', borderWidth:1 }
+    },
+    scales: {
+      x: { ticks:{color:'#6b7280',font:{size:11}}, grid:{color:'#1e2130'} },
+      y: { ticks:{color:'#6b7280',font:{size:11},callback:v=>v>=10000?(v/10000).toFixed(0)+'w':v}, grid:{color:'#1e2130'} }
+    }
+  }
+});
+
+// Section 4: 年龄段
+const ageGrid = document.getElementById('age-grid');
+Object.entries(ageRaw).forEach(([age, data]) => {
+  const card = document.createElement('div');
+  card.className = 'group-card';
+  const total = data.reduce((s,d)=>s+d.cnt,0);
+  const max = data[0].cnt;
+  card.innerHTML = `<div class="group-title">🎂 ${age}岁</div>` +
+    data.map((d,i) => {
+      const barW = Math.round(d.cnt/max*100);
+      const rankClass = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-other';
+      return `<div class="emotion-row">
+        <div class="rank-num ${rankClass}">${i+1}</div>
+        <div class="emotion-name">${d.e}</div>
+        <div class="emotion-bar-wrap"><div class="emotion-bar" style="width:${barW}%;background:${COLORS[i]};"></div></div>
+        <div class="emotion-pct">${fmtK(d.cnt)}</div>
+      </div>`;
+    }).join('');
+  ageGrid.appendChild(card);
+});
+
+// Section 5: 城市
+const cityGrid = document.getElementById('city-grid');
+const cityOrder = ['一线城市','新一线城市','二线城市','三线城市','四线城市','五线城市'];
+cityOrder.forEach(city => {
+  const data = cityRaw[city];
+  if(!data) return;
+  const card = document.createElement('div');
+  card.className = 'group-card';
+  const max = data[0].cnt;
+  card.innerHTML = `<div class="group-title">🏙 ${city}</div>` +
+    data.map((d,i) => {
+      const barW = Math.round(d.cnt/max*100);
+      const rankClass = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-other';
+      return `<div class="emotion-row">
+        <div class="rank-num ${rankClass}">${i+1}</div>
+        <div class="emotion-name">${d.e}</div>
+        <div class="emotion-bar-wrap"><div class="emotion-bar" style="width:${barW}%;background:${COLORS[i]};"></div></div>
+        <div class="emotion-pct">${fmtK(d.cnt)}</div>
+      </div>`;
+    }).join('');
+  cityGrid.appendChild(card);
+});
+
+// ==================== Tab 切换 ====================
+function switchTab(idx) {
+  document.querySelectorAll('.section').forEach((s,i)=> s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.nav-btn').forEach((b,i)=> b.classList.toggle('active', i===idx));
+}
 </script>
 </body>
 </html>
